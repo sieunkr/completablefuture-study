@@ -15,15 +15,12 @@ import static org.junit.Assert.*;
 @RunWith(SpringRunner.class)
 public class DemoApplicationTests {
 
-
     /*
-
     스터디로 잠시 작성한 소스, 다시 코드 정리해야 함
-    
     */
 
 
-
+    
     @Test
     public void static_runAsync(){
         try {
