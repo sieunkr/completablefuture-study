@@ -73,5 +73,13 @@ public class CoffeeComponent implements CoffeeUseCase {
 
     }
 
+    @Override
+    public CompletableFuture<Integer> getDiscountPriceAsync(Integer price) {
+        return CompletableFuture.supplyAsync(() -> {
+            log.info("supplyAsync");
+            return (int)(price * 0.9);
+        },executor);
+    }
+
 }
 

@@ -9,9 +9,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
+import java.util.stream.Collectors;
 
 import static org.junit.Assert.*;
 
@@ -84,6 +87,7 @@ public class CoffeeComponentTest {
         assertEquals(expectedPrice, resultPrice);
     }
 
+
     @Test
     public void 가격_조회_비동기_호출_콜백_다른쓰레드로_테스트(){
 
@@ -105,6 +109,59 @@ public class CoffeeComponentTest {
         assertEquals(expectedPrice, resultPrice);
     }
 
-    
+
+    @Test
+    public void thenCombine_test(){
+
+        Integer expectedPrice = 1100 + 1300;
+
+        CompletableFuture<Integer> futureA = coffeeComponent.getPriceAsync("latte");
+        CompletableFuture<Integer> futureB = coffeeComponent.getPriceAsync("mocha");
+
+        //futureA.thenCombine(futureB, (a, b) -> a + b);
+        Integer resultPrice = futureA.thenCombine(futureB, Integer::sum).join();
+
+        assertEquals(expectedPrice, resultPrice);
+    }
+
+
+    @Test
+    public void thenCompose_test(){
+
+        Integer expectedPrice = (int)(1100 * 0.9);
+
+        CompletableFuture<Integer> futureA = coffeeComponent.getPriceAsync("latte");
+
+        //futureA.thenCombine(futureB, (a, b) -> a + b);
+        Integer resultPrice = futureA.thenCompose(result -> coffeeComponent.getDiscountPriceAsync(result)).join();
+
+        assertEquals(expectedPrice, resultPrice);
+    }
+
+
+    @Test
+    public void allOf_test(){
+
+        Integer expectedPrice = 1100 + 1300 + 900;
+
+        CompletableFuture<Integer> futureA = coffeeComponent.getPriceAsync("latte");
+        CompletableFuture<Integer> futureB = coffeeComponent.getPriceAsync("mocha");
+        CompletableFuture<Integer> futureC = coffeeComponent.getPriceAsync("americano");
+
+        List<CompletableFuture<Integer>> completableFutureList = Arrays.asList(futureA, futureB, futureC);
+
+        //Integer resultPrice = CompletableFuture.allOf(completableFutureList.toArray(new CompletableFuture[3]))
+        Integer resultPrice = CompletableFuture.allOf(futureA, futureB, futureC)
+                .thenApply(Void -> completableFutureList.stream().map(CompletableFuture::join).collect(Collectors.toList()))
+                .join()
+                .stream()
+                .reduce(0, Integer::sum);
+
+        assertEquals(expectedPrice, resultPrice);
+
+    }
+
+
+
 
 }
