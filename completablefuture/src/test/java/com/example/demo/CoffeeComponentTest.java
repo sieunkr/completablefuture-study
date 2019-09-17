@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -19,10 +20,9 @@ import static org.junit.Assert.*;
 
 @Slf4j
 @RunWith(SpringRunner.class)
-@ContextConfiguration(classes = {
-        CoffeeComponent.class,
-        CoffeeRepository.class,
-        ThreadPoolTaskExecutor.class })
+//TODO: ThreadPoolTaskExecutor 를 정상적으로 주입하지 못하는 문제 발생해서 SpringBOotTest 를 임시로 사용,
+//TODO: ContextConfiguration 를 사용해서 테스트 코드 수행 시간 짧게 변경
+@SpringBootTest
 public class CoffeeComponentTest {
 
     @Autowired

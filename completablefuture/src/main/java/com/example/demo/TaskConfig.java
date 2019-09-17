@@ -11,9 +11,9 @@ import java.util.concurrent.Executor;
 public class TaskConfig {
 
     @Bean(name = "threadPoolTaskExecutor")
-    public Executor threadPoolTaskExecutor() {
+    public ThreadPoolTaskExecutor threadPoolTaskExecutor() {
         ThreadPoolTaskExecutor taskExecutor = new ThreadPoolTaskExecutor();
-        taskExecutor.setCorePoolSize(3);
+        taskExecutor.setCorePoolSize(30);
         taskExecutor.setMaxPoolSize(30);
         taskExecutor.setQueueCapacity(10);
         taskExecutor.setThreadNamePrefix("Executor-");
