@@ -2,6 +2,7 @@ package com.example.demo;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Component;
 
 import java.util.concurrent.CompletableFuture;
@@ -15,7 +16,8 @@ import java.util.concurrent.Future;
 public class CoffeeComponent implements CoffeeUseCase {
 
     private final CoffeeRepository coffeeRepository;
-    Executor executor = Executors.newFixedThreadPool(10);
+    //Executor executor = Executors.newFixedThreadPool(10);
+    private final ThreadPoolTaskExecutor threadPoolTaskExecutor;
 
     @Override
     public int getPrice(String name) {
@@ -68,7 +70,7 @@ public class CoffeeComponent implements CoffeeUseCase {
                 log.info("supplyAsync");
                 return coffeeRepository.getPriceByName(name);
             },
-            executor
+            threadPoolTaskExecutor
         );
     }
 
@@ -78,7 +80,7 @@ public class CoffeeComponent implements CoffeeUseCase {
         return CompletableFuture.supplyAsync(() -> {
             log.info("supplyAsync");
             return (int)(price * 0.9);
-        },executor);
+        }, threadPoolTaskExecutor);
     }
 
 }
